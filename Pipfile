@@ -12,6 +12,10 @@ python-dotenv = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
 requests = "*"
+pillow = "*"
+whitenoise = "*"
+django-compressor = "*"
+django-tailwind = "*"
 
 [dev-packages]
 
