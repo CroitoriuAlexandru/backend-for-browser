@@ -26,7 +26,7 @@ def set_organization(request):
 def get_routes(request):
     """returns a view containing all the possible routes"""
     routes = [
-        '/api/organization',
+        '/api/organization/set_organization',
     ]
 
     return Response(routes)

@@ -26,6 +26,6 @@ urlpatterns = [
     path('api/', include('base.api.urls')),
 
     path('organization/', include('organization.urls')),
-    path('api/', include('organization.api.urls')),
+    path('api/organization/', include('organization.api.urls')),
     
 ]

@@ -11,10 +11,8 @@ def registerOrganization(request):
         cui = request.POST.get('cui')
         print(cui)
         url = endpoint + cui
-        print(url)
         response = requests.get(url)
         # if response is not 200 return just the cui that was recived
-        print(response.json().get("date_generale"))
         api_record_id = response.json().get("_id")
         last_querry_date = response.json().get("date_generale").get("data")
         cui = response.json().get("CUI")
@@ -58,20 +56,16 @@ def registerOrganization(request):
         }
         print(organization_data)
 
-        companyes = Company.objects.all()
-        same_cui_company = companyes.filter(cui=cui)
-        company = Company()
-        if not same_cui_company:
+        company = Company.objects.filter(cui=cui)
+        if not company.exists():
             company = Company(**organization_data)
-            company.save()
-        else:
-            company = same_cui_company
-        
+            company.save()       
         
         context = {
             'cui': cui,
             'response': company,
         }
+        print(company)
         return render(request, 'organization.html', context)
     
     else :
