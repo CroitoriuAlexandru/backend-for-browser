@@ -6,6 +6,7 @@ import requests
 # create a view that recives a string and makes a request for the api
 def registerOrganization(request):
     if request.method == 'POST':
+        user = request.user
         endpoint = "https://api.aipro.ro/get?cui="
         cui = request.POST.get('cui')
         print(cui)
@@ -34,6 +35,7 @@ def registerOrganization(request):
         forma_organizare = response.json().get("date_generale").get("forma_organizare")
         forma_juridica = response.json().get("date_generale").get("forma_juridica")
         organization_data = {
+            "user": user,
             "api_record_id": api_record_id,
             "last_querry_date": last_querry_date,
             "cui": cui,

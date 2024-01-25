@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 # organization table
 class Company(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
     api_record_id = models.CharField(max_length=200, null=True, blank=True)
     last_querry_date = models.CharField(max_length=200, null=True, blank=True)
     cui = models.CharField(max_length=200, null=True, blank=True)

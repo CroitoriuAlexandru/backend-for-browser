@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('ai/', include('ai.urls')),
     path('organization/', include('organization.urls')),
+    path('api/', include('organization.api.urls')),
     
 ] + debug_paths 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
