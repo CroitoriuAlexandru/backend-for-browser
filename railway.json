@@ -4,7 +4,7 @@
         "builder": "NIXPACKS"
     },
     "deploy": {
-        "startCommand": "python -v && python3 -v && python manage.py migrate && gunicorn backend.wsgi",
+        "startCommand": "python3 -v && python manage.py migrate && gunicorn backend.wsgi",
         "restartPolicyType": "ON_FAILURE",
         "restartPolicyMaxRetries": 10
     }
