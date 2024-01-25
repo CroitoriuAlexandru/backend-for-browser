@@ -57,8 +57,16 @@ def registerOrganization(request):
             "forma_juridica": forma_juridica,
         }
         print(organization_data)
-        company = Company(**organization_data)
-        company.save()
+
+        companyes = Company.objects.all()
+        same_cui_company = companyes.filter(cui=cui)
+        company = Company()
+        if not same_cui_company:
+            company = Company(**organization_data)
+            company.save()
+        else:
+            company = same_cui_company
+        
         
         context = {
             'cui': cui,
