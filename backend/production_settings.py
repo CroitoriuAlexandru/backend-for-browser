@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'base',
     'ai'
+    'organization',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
