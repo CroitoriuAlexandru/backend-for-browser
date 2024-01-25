@@ -6,10 +6,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{% comment %} <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css"  rel="stylesheet" /> {% endcomment %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css"  rel="stylesheet" />
 
 {% comment %} {% compress css %} {% endcomment %}
-{% tailwind_css %}
+{% comment %} {% tailwind_css %} {% endcomment %}
 {% comment %} <link rel="stylesheet" href="{% static 'src/output.css' %}"> {% endcomment %}
 {% comment %} {% endcompress %} {% endcomment %}
 
@@ -17,7 +17,7 @@
     {% block title %}
     <title>Base</title>
     {% endblock %}
-    {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 

@@ -21,7 +21,6 @@ def chat_with_gpt(api_key, messages):
     response = requests.post(url, headers=headers, json=data)
     return response
 
-
 # Create your views here.
 def ai_view(request):
     if request.method == 'POST':
