@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'base',
     'ai',
     'organization',
+    'desighnAi'
+    
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -143,7 +145,8 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "/mnt/c/Users/croit/Desktop/db.sqlite3",
+        "NAME": "/mnt/c/Users/croit/db.sqlite3",
+        # "NAME": "db.sqlite3",
     }
 }
 

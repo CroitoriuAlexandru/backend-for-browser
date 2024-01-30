@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('ai/', include('ai.urls')),
     
+    path("desighn-ai/", include("desighnAi.urls")),
     
     path('', include('base.urls')),
     path('api/', include('base.api.urls')),
