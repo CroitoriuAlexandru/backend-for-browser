@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from .models import Company
+from .models import Company, Department, Employee
+from django.contrib.auth.models import User
 import requests
+
 # Create your views here.
 
 def get_organization_data(cui, user):
@@ -49,3 +51,15 @@ def registerOrganization(request):
     
     else :
         return render(request, 'organization.html', {'cui': "Enter CUI"})
+    
+def get_organigram(request):
+    context = {}
+    if request.method == 'POST':
+        print("post request recived")
+        user = request.user
+        company = Company.objects.get(user=user)
+        departments = Department.objects.filter(company=company)
+        
+        return render(request, 'organigram.html', context)
+    else:
+        return render(request, 'organigramPage.html', context)

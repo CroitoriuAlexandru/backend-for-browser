@@ -1,11 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
+
+
+# employee user table
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+
 
 # organization table
 class Company(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     api_record_id = models.CharField(max_length=200, null=True, blank=True)
     last_querry_date = models.CharField(max_length=200, null=True, blank=True)
     cui = models.CharField(max_length=200, null=True, blank=True)
@@ -27,19 +37,14 @@ class Company(models.Model):
     forma_juridica = models.CharField(max_length=200, null=True, blank=True)
     
     def __str__(self):
-        return f'{self.cui} - {self.denumire}'
+        return f'{self.denumire}'
+
 
 # departments table
 class Department(models.Model):
-    name = models.CharField(max_length=50)
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+ 
     def __str__(self):
         return self.name
-    
-# employee user table
-class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # on delete set null
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
-    def __str__(self):
-        return self.name
-    
+ 

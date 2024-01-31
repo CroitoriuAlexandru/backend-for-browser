@@ -54,7 +54,6 @@ def ai_view(request):
         response = client.images.generate(prompt=prompt, size="1024x1024")
         print((response.data[0].url))
         context["image"] = (response.data[0].url)
-        
     else:
         print("get")
     
