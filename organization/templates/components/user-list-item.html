@@ -1,0 +1,22 @@
+{% load static %}
+
+{% if employee.user == user %}
+<div class="flex items-center space-x-2 border-b-2 bg-neutral-200">
+{% else %}
+<div class="flex items-center space-x-2 border-b-2">
+
+{% endif %}
+
+    <img class="max-w-8 max-h-8" src="{% static 'profile.svg' %}" alt="profile" class="img-fluid">
+    <div>{{role}}</div>
+    <div>{{employee.user.username}}</div>
+    <button 
+        hx-post="{% url 'delete_employee' pk=employee.user.pk %}"
+        hx-swap="outerHTML"
+        hx-target="#employees"
+        hx-trigger="click"
+        class="bg-red-400 hover:bg-red-600 text-white font-bold p-2 rounded !ml-auto"
+        >
+        <img src="{% static 'trash.svg' %}" alt="trash" class="max-w-6 max-h-6 text-white fill-white">
+    </button>
+</div>

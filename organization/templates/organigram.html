@@ -1,3 +1,26 @@
-<div class="container">
-    
+{% load static %}
+
+<div id="organization" class="container border p-2 grow">
+    <div class="">
+        <div class="flex flex-col items-center border p-2 m-2 max-w-24 mx-auto rounded-xl bg-neutral-100 hover:bg-neutral-200 space-x-4">
+            <img class="max-w-8 max-h-8" src="{% static 'profile.svg' %}" alt="profile" class="img-fluid">
+            <p>{{user.username}}</p>
+        </div>
+
+        <div class="flex items-start text-center justify-between">
+            {% for department in departments %}
+            <div class="flex flex-col grow">
+                <div class="underline font-bold">{{department.name}}</div>
+                <div class="flex flex-col">
+                    {% for employee in department.get_employees %}
+                        <div class="flex flex-col items-center border p-2 m-2 max-w-48 mx-auto rounded-xl bg-neutral-100 hover:bg-neutral-200 space-x-4">
+                            <img class="max-w-8 max-h-8" src="{% static 'profile.svg' %}" alt="profile" class="img-fluid">
+                            <p>{{employee.user.username}}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>

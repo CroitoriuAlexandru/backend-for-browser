@@ -1,10 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Company, Department, Employee
 from django.contrib.auth.models import User
 import requests
 
-# Create your views here.
+def getCompanyContext(user):
+    company = Company.objects.get(user=user)
+    employees = Employee.objects.filter(company=company)
+    departments = Department.objects.filter(company=company)
+    context = {
+        'company': company,
+        'employees': employees,
+        'departments': departments,
+    }
+    return context
 
+
+# Create your views here.
 def get_organization_data(cui, user):
     endpoint = f"https://api.aipro.ro/get?cui={cui}"
     response = requests.get(endpoint)
@@ -51,15 +62,63 @@ def registerOrganization(request):
     
     else :
         return render(request, 'organization.html', {'cui': "Enter CUI"})
-    
-def get_organigram(request):
-    context = {}
+
+def organigramPage(request):
+    user = request.user
+    company = Company.objects.get(user=user)
+    context = getCompanyContext(user)
     if request.method == 'POST':
-        print("post request recived")
-        user = request.user
-        company = Company.objects.get(user=user)
-        departments = Department.objects.filter(company=company)
-        
-        return render(request, 'organigram.html', context)
+        print("poist request should not be allowed")
+        return render(request, 'organigramPage.html', context)
     else:
         return render(request, 'organigramPage.html', context)
+    
+    
+
+def create_employee(request):
+    user = request.user
+    company = Company.objects.get(user=user)
+    context = {
+        "company": company,
+    }
+    if request.method == 'POST':
+        print("post request recived")
+        
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        employee = Employee(user=user, company=company)
+        employee.save()
+
+    context = getCompanyContext(request.user)
+    return render(request, 'employees.html', context)
+
+def delete_employee(request, pk):
+    user = User.objects.get(id=pk)
+    user.delete()
+
+    context = getCompanyContext(request.user)
+    return render(request, 'employees.html', context) 
+
+def create_department(request):
+    user = request.user
+    company = Company.objects.get(user=user)
+    if request.method == 'POST':
+        print("post request recived")
+        name = request.POST.get('department')        
+        department = Department(company=company, name=name)
+        department.save()
+        
+    context = getCompanyContext(user)
+    return render(request, 'departments.html', context)
+
+
+def delete_department(request, pk):
+    department = Department.objects.get(id=pk)
+    department.delete()
+
+    context = getCompanyContext(request.user)
+    return render(request, 'departments.html', context)

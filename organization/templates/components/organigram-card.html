@@ -1,0 +1,24 @@
+{% load static %}
+
+{% if employee.user == user %}
+<div class="flex items-center space-x-2 border-b-2 bg-neutral-200">
+{% else %}
+<div class="flex items-center space-x-2 border-b-2">
+
+{% endif %}
+
+    <div>{{department.name}}</div>
+    <button 
+        hx-post="{% url 'delete_department' pk=department.pk %}"
+        hx-swap="outerHTML"
+        hx-target="#departments"
+        hx-trigger="click"
+        class="bg-red-400 hover:bg-red-600 text-white font-bold p-2 rounded !ml-auto"
+        >
+    </button>
+</div>
+
+functie (i){
+    functie(i-1)
+    console.log(i)
+}

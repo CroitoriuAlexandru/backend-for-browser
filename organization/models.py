@@ -10,7 +10,7 @@ class Employee(models.Model):
     department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
-        return self.name
+        return self.user.username
 
 
 # organization table
@@ -46,5 +46,8 @@ class Department(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
  
     def __str__(self):
-        return self.name
+        return f'{self.name}'
+ 
+    def get_employees(self):
+        return Employee.objects.filter(department=self)
  
