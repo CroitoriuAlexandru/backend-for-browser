@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     'base',
     'ai',
     'organization',
-    'desighnAi'
-    
+    'desighnAi',
+    'socialLogin',    
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

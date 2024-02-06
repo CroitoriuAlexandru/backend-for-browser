@@ -21,12 +21,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('ai/', include('ai.urls')),
     
+    
     path("desighn-ai/", include("desighnAi.urls")),
     
     path('', include('base.urls')),
-    path('api/', include('base.api.urls')),
 
     path('organization/', include('organization.urls')),
+       
+    
+    
+    
+    path('api/', include('base.api.urls')),
+    path('api/auth/', include('socialLogin.api.urls')),
     path('api/organization/', include('organization.api.urls')),
     
 ]
