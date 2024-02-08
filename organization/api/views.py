@@ -81,6 +81,18 @@ def set_organization(request):
     return Response(serializer.data)
     
 
+@api_view(['GET'])
+def generate_departments(request):
+    data = {
+        'departments': [
+            'sales',
+            'marketing',
+            'finance',
+            'hr',
+            'it',
+        ]
+    }
+    return Response(data)
 
 
 
