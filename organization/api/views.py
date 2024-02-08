@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from organization.ai.department_generator import fetch_company_info
 
 import re # regex
 import requests
@@ -83,6 +84,8 @@ def set_organization(request):
 
 @api_view(['GET'])
 def generate_departments(request):
+    user = request.user
+    print(user)
     data = {
         'departments': [
             'sales',
@@ -92,7 +95,9 @@ def generate_departments(request):
             'it',
         ]
     }
+    # fetch_company_info()
     return Response(data)
+    
 
 
 
