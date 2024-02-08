@@ -26,13 +26,11 @@ urlpatterns = [
     
     path('', include('base.urls')),
 
-    path('organization/', include('organization.urls')),
        
-    
-    
-    
     path('api/', include('base.api.urls')),
     path('api/auth/', include('socialLogin.api.urls')),
+
+    path('organization/', include('organization.urls')),
     path('api/organization/', include('organization.api.urls')),
     
 ]
