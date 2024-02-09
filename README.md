@@ -5,3 +5,11 @@ pipenv install django
 pipenv install djangorestframework
 pipenv install djangorestframework-simplejwt
 pipenv install django-cors-headers
+
+
+
+home page should have all of the moust used apps from history
+take history see what are the most used urls
+set the most used urls as apps for home page
+000011111100000
+000011110000000
