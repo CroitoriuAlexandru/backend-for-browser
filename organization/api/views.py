@@ -99,8 +99,13 @@ def set_organization(request):
 
 @api_view(['GET'])
 def generate_departments(request):
+
     user = request.user
     print(user)
+    if user.is_anonymous:
+        return Response({"message": "User not found"}, status=200)
+
+
     data = {
         'departments': [
             'sales',
@@ -112,8 +117,35 @@ def generate_departments(request):
     }
     # fetch_company_info()
     return Response(data)
-    
 
+
+@api_view(['GET'])
+def get_mails(request):
+    data = {
+        "mails": [
+            {
+                "name": "John Doe",
+                "email": "jhon_doe@gmail.com"
+            },
+            {
+                "name": "Coana Mare",
+                "email": "coana_mare@gmail.com"
+            },
+            {
+                "name": "Gigi Becali",
+                "email": "gigi_becali@gmail.com"
+            },
+            {
+                "name": "Baga Hagi",
+                "email": "baga_hagi@gmail.com"
+            },
+            {
+                "name": "Testul Test",
+                "email": "testul_test@gmail.com"
+            }
+        ]
+    }
+    return Response(data)
 
 
 @api_view(['GET'])
