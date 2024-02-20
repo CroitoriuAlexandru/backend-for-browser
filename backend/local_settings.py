@@ -40,9 +40,12 @@ ALLOWED_HOSTS = ["127.0.0.1"]
 # Comment out the following line and place your railway URL, and your production URL in the array.
 # CSRF_TRUSTED_ORIGINS = ["https://" + os.environ['APP_DOMAIN']]
 
+# Google OAuth2 settings
+GOOGLE_OAUTH2_CLIENT_ID = os.environ["DJANGO_GOOGLE_OAUTH2_CLIENT_ID"]
+GOOGLE_OAUTH2_CLIENT_SECRET = os.environ["DJANGO_GOOGLE_OAUTH2_CLIENT_SECRET"]
+GOOGLE_OAUTH2_PROJECT_ID = os.environ["DJANGO_GOOGLE_OAUTH2_PROJECT_ID"]
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -149,6 +152,17 @@ DATABASES = {
         # "NAME": "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.environ["PGDATABASE"],
+#         'USER': os.environ["PGUSER"],
+#         'PASSWORD': os.environ["PGPASSWORD"],
+#         'HOST': os.environ["PGHOST"],
+#         'PORT': os.environ["PGPORT"],
+#     }
+# }
 
 
 # Password validation
