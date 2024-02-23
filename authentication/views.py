@@ -93,8 +93,8 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             access_token, refresh_token = generate_tokens_for_user(user)
             response_data = {
                 'user': UserSerializer(user).data,
-                'access_token': str(access_token),
-                'refresh_token': str(refresh_token)
+                'access': str(access_token),
+                'refresh': str(refresh_token)
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
