@@ -32,7 +32,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ["127.0.0.1"]
-
+AUTH_USER_MODEL = "authentication.User"
 
 # ALLOWED_HOSTS = [os.environ['APP_DOMAIN']]
 
@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ["127.0.0.1"]
 GOOGLE_OAUTH2_CLIENT_ID = os.environ["DJANGO_GOOGLE_OAUTH2_CLIENT_ID"]
 GOOGLE_OAUTH2_CLIENT_SECRET = os.environ["DJANGO_GOOGLE_OAUTH2_CLIENT_SECRET"]
 GOOGLE_OAUTH2_PROJECT_ID = os.environ["DJANGO_GOOGLE_OAUTH2_PROJECT_ID"]
+BASE_FRONTEND_URL = os.environ["DJANGO_BASE_FRONTEND_URL"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -56,11 +57,9 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    'base',
-    'ai',
+    'drf_yasg',
+    'authentication',
     'organization',
-    'desighnAi',
-    'socialLogin',    
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

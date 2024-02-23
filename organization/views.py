@@ -1,124 +1,157 @@
-from django.shortcuts import render, redirect
-from .models import Company, Department, Employee
-from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+# from organization.ai.department_generator import fetch_company_info
+
+import re # regex
 import requests
 
-def getCompanyContext(user):
-    company = Company.objects.get(user=user)
-    employees = Employee.objects.filter(company=company)
-    departments = Department.objects.filter(company=company)
-    context = {
-        'company': company,
-        'employees': employees,
-        'departments': departments,
-    }
-    return context
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.views import TokenObtainPairView
+
+from organization.models import Company
+from organization.serializer import CompanySerializer
+
+def validateCui(cui):
+    # Check if cui is None or empty
+    if cui is None or cui == '':
+        return False
+
+    # Check if cui contains only numbers
+    if re.search(r'[a-zA-Z]', cui):
+        return False
+
+    return True
 
 
-# Create your views here.
-def get_organization_data(cui, user):
+def get_company_info(user, cui):
+    
+    if not validateCui(cui):
+        print("cui is not valid")
+        return {"message": "CUI is not valid"}
+    
     endpoint = f"https://api.aipro.ro/get?cui={cui}"
     response = requests.get(endpoint)
-    organization_data = {
-        "user": user,
-        "api_record_id": response.json().get("_id"),
-        "last_querry_date": response.json().get("date_generale").get("data"),
-        "cui": response.json().get("CUI"),
-        "denumire": response.json().get("nume_companie"),
-        "adresa": response.json().get("date_generale").get("adresa"),
-        "nrRegCom": response.json().get("date_generale").get("nrRegCom"),
-        "telefon": response.json().get("date_generale").get("telefon"),
-        "fax": response.json().get("date_generale").get("fax"),
-        "codPostal": response.json().get("date_generale").get("codPostal"),
-        "act": response.json().get("date_generale").get("act"),
-        "stare_inregistrare": response.json().get("date_generale").get("stare_inregistrare"),
-        "data_inregistrare": response.json().get("date_generale").get("data_inregistrare"),
-        "cod_CAEN": response.json().get("date_generale").get("cod_CAEN"),
-        "iban": response.json().get("date_generale").get("iban"),
-        "statusRO_e_Factura": response.json().get("date_generale").get("statusRO_e_Factura"),
-        "organFiscalCompetent": response.json().get("date_generale").get("organFiscalCompetent"),
-        "forma_de_proprietate": response.json().get("date_generale").get("forma_de_proprietate"),
-        "forma_organizare": response.json().get("date_generale").get("forma_organizare"),
-        "forma_juridica": response.json().get("date_generale").get("forma_juridica"),
-    }
+    if response.status_code != 200:
+        return {"message": 'Company with cui {cui} not found'}
 
-    
+
+
+    organization_data = {
+            "user_id": user.id,
+            "api_record_id": response.json().get("_id"),
+            "last_querry_date": response.json().get("date_generale").get("data"),
+            "cui": response.json().get("CUI"),
+            "denumire": response.json().get("nume_companie"),
+            "adresa": response.json().get("date_generale").get("adresa"),
+            "nrRegCom": response.json().get("date_generale").get("nrRegCom"),
+            "telefon": response.json().get("date_generale").get("telefon"),
+            "fax": response.json().get("date_generale").get("fax"),
+            "codPostal": response.json().get("date_generale").get("codPostal"),
+            "act": response.json().get("date_generale").get("act"),
+            "stare_inregistrare": response.json().get("date_generale").get("stare_inregistrare"),
+            "data_inregistrare": response.json().get("date_generale").get("data_inregistrare"),
+            "cod_CAEN": response.json().get("date_generale").get("cod_CAEN"),
+            "iban": response.json().get("date_generale").get("iban"),
+            "statusRO_e_Factura": response.json().get("date_generale").get("statusRO_e_Factura"),
+            "organFiscalCompetent": response.json().get("date_generale").get("organFiscalCompetent"),
+            "forma_de_proprietate": response.json().get("date_generale").get("forma_de_proprietate"),
+            "forma_organizare": response.json().get("date_generale").get("forma_organizare"),
+            "forma_juridica": response.json().get("date_generale").get("forma_juridica"),
+        }
+
+
     return organization_data
 
-
-# create a view that recives a string and makes a request for the api
-def registerOrganization(request):
-    if request.method == 'POST':
-        cui = request.POST.get('cui')
-        print(cui)
-        company = Company.objects.filter(cui=cui)
-        if not company.exists():
-            organization_data = get_organization_data(cui, request.user)
-            company = Company(**organization_data)
-            company.save()
-
-        print(company)
-        return render(request, 'organization.html', {'company': company})
-    
-    else :
-        return render(request, 'organization.html', {'cui': "Enter CUI"})
-
-def organigramPage(request):
+# @permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def set_organization(request):
+    cui = request.data["cui"]
+    # cui must be validated to not be empty and to only contain numbers
+   
     user = request.user
-    company = Company.objects.get(user=user)
-    context = getCompanyContext(user)
-    if request.method == 'POST':
-        print("poist request should not be allowed")
-        return render(request, 'organigramPage.html', context)
+    if user.is_anonymous:
+        return Response({"message": "User not found"}, status=200)
+
+    #  user has a company and it will return it
+    user_company = Company.objects.filter(user_id=user.id)
+    if user_company.exists():
+        company = user_company.first()
+        company.delete()
+        organization_data = get_company_info(user, cui)
+        if organization_data.get("message"):
+            return Response(organization_data, status=200)
+        company = Company(**organization_data)
+        company.save()
+        serializer = CompanySerializer(company, many=False)
+        return Response(serializer.data)
     else:
-        return render(request, 'organigramPage.html', context)
-    
-    
+        organization_data = get_company_info(user, cui)
+        if organization_data.get("message"):
+            return Response(organization_data, status=200)
+        company = Company(**organization_data)
+        company.save()
+        serializer = CompanySerializer(company, many=False)
+        return Response(serializer.data)
 
-def create_employee(request):
+
+@api_view(['GET'])
+def generate_departments(request):
+
     user = request.user
-    company = Company.objects.get(user=user)
-    context = {
-        "company": company,
+    print(user)
+    if user.is_anonymous:
+        return Response({"message": "User not found"}, status=200)
+
+
+    data = {
+        'departments': [
+            'sales',
+            'marketing',
+            'finance',
+            'hr',
+            'it',
+        ]
     }
-    if request.method == 'POST':
-        print("post request recived")
-        
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        user = User.objects.create_user(username, email, password)
-        user.save()
-        employee = Employee(user=user, company=company)
-        employee.save()
-
-    context = getCompanyContext(request.user)
-    return render(request, 'employees.html', context)
-
-def delete_employee(request, pk):
-    user = User.objects.get(id=pk)
-    user.delete()
-
-    context = getCompanyContext(request.user)
-    return render(request, 'employees.html', context) 
-
-def create_department(request):
-    user = request.user
-    company = Company.objects.get(user=user)
-    if request.method == 'POST':
-        print("post request recived")
-        name = request.POST.get('department')        
-        department = Department(company=company, name=name)
-        department.save()
-        
-    context = getCompanyContext(user)
-    return render(request, 'departments.html', context)
+    # fetch_company_info()
+    return Response(data)
 
 
-def delete_department(request, pk):
-    department = Department.objects.get(id=pk)
-    department.delete()
+@api_view(['GET'])
+def get_mails(request):
+    data = {
+        "mails": [
+            {
+                "name": "John Doe",
+                "email": "jhon_doe@gmail.com"
+            },
+            {
+                "name": "Coana Mare",
+                "email": "coana_mare@gmail.com"
+            },
+            {
+                "name": "Gigi Becali",
+                "email": "gigi_becali@gmail.com"
+            },
+            {
+                "name": "Baga Hagi",
+                "email": "baga_hagi@gmail.com"
+            },
+            {
+                "name": "Testul Test",
+                "email": "testul_test@gmail.com"
+            }
+        ]
+    }
+    return Response(data)
 
-    context = getCompanyContext(request.user)
-    return render(request, 'departments.html', context)
+
+@api_view(['GET'])
+def get_routes(request):
+    """returns a view containing all the possible routes"""
+    routes = [
+        '/api/organization/set_organization',
+    ]
+
+    return Response(routes)
