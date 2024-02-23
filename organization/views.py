@@ -99,10 +99,10 @@ def set_organization(request):
 @api_view(['GET'])
 def generate_departments(request):
 
-    user = request.user
-    print(user)
-    if user.is_anonymous:
-        return Response({"message": "User not found"}, status=200)
+    # user = request.user
+    # print(user)
+    # if user.is_anonymous:
+    #     return Response({"message": "User not found"}, status=200)
 
 
     data = {
@@ -114,6 +114,7 @@ def generate_departments(request):
             'it',
         ]
     }
+    
     # fetch_company_info()
     return Response(data)
 
