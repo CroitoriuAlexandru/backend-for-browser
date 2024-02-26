@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 # from organization.ai.department_generator import fetch_company_info
-
+from authentication.utils import get_user_id_from_request
+from authentication.models import User
 import re # regex
 import requests
 
@@ -70,7 +71,7 @@ def set_organization(request):
     cui = request.data["cui"]
     # cui must be validated to not be empty and to only contain numbers
    
-    user = request.user
+    user = User.objects.get(id=get_user_id_from_request(request))
     if user.is_anonymous:
         return Response({"message": "User not found"}, status=200)
 
@@ -146,13 +147,3 @@ def get_mails(request):
         ]
     }
     return Response(data)
-
-
-@api_view(['GET'])
-def get_routes(request):
-    """returns a view containing all the possible routes"""
-    routes = [
-        '/api/organization/set_organization',
-    ]
-
-    return Response(routes)
