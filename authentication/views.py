@@ -98,7 +98,6 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
-
 class GoogleUserListApi(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
@@ -149,3 +148,9 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
+    
+class UserProfileApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(id=get_user_id_from_request(request))
+        ic(user)
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
