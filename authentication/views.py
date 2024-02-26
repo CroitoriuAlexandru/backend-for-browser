@@ -64,7 +64,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             
             access_token, refresh_token = generate_tokens_for_user(user)
             response_data = {
-                'user': UserSerializer(user).data,
+                # 'user': UserSerializer(user).data,
                 'access': str(access_token),
                 'refresh': str(refresh_token)
             }
@@ -92,7 +92,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             
             access_token, refresh_token = generate_tokens_for_user(user)
             response_data = {
-                'user': UserSerializer(user).data,
+                # 'user': UserSerializer(user).data,
                 'access': str(access_token),
                 'refresh': str(refresh_token)
             }
@@ -126,7 +126,7 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         password = serializers.CharField()
 
     def post(self, request, *args, **kwargs):
-        print("post request for login made")
+        print("post request for login")
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         validated_data = input_serializer.validated_data
@@ -143,7 +143,7 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
         access_token, refresh_token = generate_tokens_for_user(user)
         response_data = {
-            'user': UserSerializer(user).data,
+            # 'user': UserSerializer(user).data,
             'access': str(access_token),
             'refresh': str(refresh_token)
         }
