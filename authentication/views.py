@@ -12,13 +12,13 @@ from .utils import (
     generate_tokens_for_user, 
     google_refresh_access_token, 
     google_validate_admin,
-    google_get_user_list
+    google_get_user_list,
+    get_user_id_from_request
     )
 from .models import User, GoogleAccessTokens
 from rest_framework import status
 from .serializers import UserSerializer
 from icecream import ic
-from rest_framework_simplejwt.tokens import AccessToken
 
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):
@@ -102,10 +102,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 class GoogleUserListApi(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
-        bearer = request.META.get('HTTP_AUTHORIZATION')
-        token = bearer.split(' ')[1]
-        user_id = AccessToken(token)["user_id"]
-        user = User.objects.get(id=str(user_id))
+        user = User.objects.get(id=get_user_id_from_request(request))
         
         googleAccessTokens = GoogleAccessTokens.objects.get(user=user)
         refresh_token = googleAccessTokens.refresh_token
@@ -117,9 +114,37 @@ class GoogleUserListApi(PublicApiMixin, ApiErrorsMixin, APIView):
             ic(user_list)
             return Response(user_list, status=status.HTTP_200_OK)
         
-            
         context = {
             "message": "User is not admin!"
         }
     
         return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        email = serializers.EmailField()
+        password = serializers.CharField()
+
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        email = validated_data.get('email')
+        password = validated_data.get('password')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not user.check_password(password):
+            return Response({'error': 'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        access_token, refresh_token = generate_tokens_for_user(user)
+        response_data = {
+            'user': UserSerializer(user).data,
+            'access': str(access_token),
+            'refresh': str(refresh_token)
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)

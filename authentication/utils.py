@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from icecream import ic
+from rest_framework_simplejwt.tokens import AccessToken
 
 GOOGLE_ID_TOKEN_INFO_URL = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 GOOGLE_ACCESS_TOKEN_OBTAIN_URL = 'https://oauth2.googleapis.com/token'
@@ -112,3 +113,11 @@ def google_validate_admin(*, access_token:  str, user_email: str) -> bool:
     if not response.ok:
         return False
     return True
+
+
+
+def get_user_id_from_request(request) -> str:
+    bearer = request.META.get('HTTP_AUTHORIZATION')
+    token = bearer.split(' ')[1]
+    user_id = AccessToken(token)["user_id"]
+    return str(user_id)
