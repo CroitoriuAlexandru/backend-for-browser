@@ -26,7 +26,6 @@ BASE_FRONTEND_URL = os.environ["DJANGO_BASE_FRONTEND_URL"]
 DEBUG = False
 
 ALLOWED_HOSTS = [os.environ['APP_DOMAIN']]
-# ALLOWED_HOSTS = ["https://django-rest-starter-production-5d42.up.railway.app"]
 
 
 # FORM SUBMISSION
