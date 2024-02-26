@@ -126,6 +126,7 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         password = serializers.CharField()
 
     def post(self, request, *args, **kwargs):
+        print("post request for login made")
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         validated_data = input_serializer.validated_data
