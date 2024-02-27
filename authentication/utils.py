@@ -32,7 +32,6 @@ def google_get_access_token(*, code: str, redirect_uri: str) -> str:
         'client_secret': settings.GOOGLE_OAUTH2_CLIENT_SECRET,
         'redirect_uri': redirect_uri,
         'grant_type': 'authorization_code'
-        # 'grant_type': 'refresh_token'
     }
 
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
@@ -62,13 +61,9 @@ def google_get_user_info(*, access_token:  str) -> Dict[str, Any]:
     prepared_request = request.prepare()
     response = requests.Session().send(prepared_request)
 
-    # , 'domain': 'area4u.ro'
-    request_users = requests.Request('GET', GOOGLE_ADMIN_USER_LIST_USERS, params={'access_token': access_token})
-    prepared_request_users = request_users.prepare()
-    response_users = requests.Session().send(prepared_request_users)
-    # response = requests.get(GOOGLE_ADMIN_USER_LIST_USERS, params={'access_token': access_token})
-    
-
+    # request_users = requests.Request('GET', GOOGLE_ADMIN_USER_LIST_USERS, params={'access_token': access_token})
+    # prepared_request_users = request_users.prepare()
+    # response_users = requests.Session().send(prepared_request_users)
 
     if not response.ok:
         raise ValidationError('Failed to obtain user info from Google.')
@@ -76,16 +71,14 @@ def google_get_user_info(*, access_token:  str) -> Dict[str, Any]:
     return response.json()
 
 
-def google_get_user_list(*, access_token:  str) -> [str]:#Dict[str, Any]:
+def google_get_user_list(*, access_token:  str) -> [str]:
     request_users = requests.Request('GET', GOOGLE_ADMIN_USER_LIST_USERS, params={'access_token': access_token, 'domain': 'area4u.ro', "viewType": 'admin_view'})
     ic(request_users.url)
     prepared_request_users = request_users.prepare()
     response_users = requests.Session().send(prepared_request_users)
 
-
     if not response_users.ok:
         raise ValidationError('Failed to obtain user info from Google.')
-
 
     user_list = response_users.json()
     users_list = []
@@ -94,30 +87,23 @@ def google_get_user_list(*, access_token:  str) -> [str]:#Dict[str, Any]:
             if "primary" in email.keys():
                 if email["primary"] == True:
                     users_list.append(email["address"])
-            # if y["primary"]:
-            #     if y["primary"] == True:
-            #         x["email"] = y["address"]
-    ic(users_list) 
-        
-
     return users_list
 
+
 def google_validate_admin(*, access_token:  str, user_email: str) -> bool:
-    # params={'access_token': access_token, 'domain': 'area4u.ro'}
     request = requests.Request('GET', GOOGLE_ADMIN_USER_LIST_USERS + "/" + user_email, params={'access_token': access_token, "viewType": 'admin_view'})
-    # ic(request.url)
     prepared_request = request.prepare()
     response = requests.Session().send(prepared_request)
-
 
     if not response.ok:
         return False
     return True
 
 
-
 def get_user_id_from_request(request) -> str:
     bearer = request.META.get('HTTP_AUTHORIZATION')
-    token = bearer.split(' ')[1]
-    user_id = AccessToken(token)["user_id"]
-    return str(user_id)
+    if bearer:
+        token = bearer.split(' ')[1]
+        user_id = AccessToken(token)["user_id"]
+        return str(user_id)
+    return ""

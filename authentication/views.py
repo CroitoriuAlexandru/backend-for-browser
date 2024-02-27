@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.shortcuts import redirect
 from rest_framework.response import Response
-from .mixins import PublicApiMixin, ApiErrorsMixin
-from .utils import (
+from authentication.mixins import PublicApiMixin, ApiErrorsMixin
+from authentication.utils import (
     google_get_access_token, 
     google_get_user_info, 
     generate_tokens_for_user, 
@@ -15,9 +15,9 @@ from .utils import (
     google_get_user_list,
     get_user_id_from_request
     )
-from .models import User, GoogleAccessTokens
+from authentication.models import User, GoogleAccessTokens
 from rest_framework import status
-from .serializers import UserSerializer
+from authentication.serializers import UserSerializer
 from icecream import ic
 
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
@@ -101,7 +101,11 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 class GoogleUserListApi(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(id=get_user_id_from_request(request))
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
         
         googleAccessTokens = GoogleAccessTokens.objects.get(user=user)
         refresh_token = googleAccessTokens.refresh_token
@@ -138,7 +142,7 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         if not user.check_password(password):
-            return Response({'error': 'Invalid password'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid password'}, status=status.HTTP_404_NOT_FOUND)
 
         access_token, refresh_token = generate_tokens_for_user(user)
         response_data = {
@@ -151,6 +155,109 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     
 class UserProfileApi(PublicApiMixin, ApiErrorsMixin, APIView):
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(id=get_user_id_from_request(request))
-        ic(user)
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    
+
+# ! apis for updating first name, last name, username, picture, password
+class SetFirstNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        first_name = serializers.CharField()
+
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        first_name = validated_data.get('first_name')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        user.first_name = first_name
+        user.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+
+class SetLastNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        last_name = serializers.CharField()
+
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        last_name = validated_data.get('last_name')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        user.last_name = last_name
+        user.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    
+class SetUsernameApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        username = serializers.CharField()
+
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        username = validated_data.get('username')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        user.username = username
+        user.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    
+class SetUserPhotoApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        picture = serializers.CharField()
+
+        
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        picture = validated_data.get('picture')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        user.picture = picture
+        user.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    
+    
+class SetUserPhoneApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        phone = serializers.CharField()
+
+        
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        phone = validated_data.get('phone')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        user.phone = phone
+        user.save()
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)

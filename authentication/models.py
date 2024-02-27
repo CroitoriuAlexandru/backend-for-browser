@@ -3,11 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    # Add any additional fields you want in your custom user model
-    # For example:
     picture = models.CharField(max_length=250, null=True, blank=True)
     username = models.CharField(max_length=250, null=True, blank=True)
     email = models.CharField(max_length=250, unique=True, null=False, blank=False)
+    phone = models.CharField(max_length=250, null=True, blank=True)
     
     REGISTRATION_CHOICES = [
         ('email', 'Email'),
