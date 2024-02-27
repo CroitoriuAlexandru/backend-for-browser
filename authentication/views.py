@@ -261,3 +261,28 @@ class SetUserPhoneApi(PublicApiMixin, ApiErrorsMixin, APIView):
         user.phone = phone
         user.save()
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    
+class setUserPasswordApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        password = serializers.CharField()
+        new_password = serializers.CharField()
+
+        
+    def post(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        validated_data = input_serializer.validated_data
+        password = validated_data.get('password')
+        new_password = validated_data.get('new_password')
+
+        user_id = get_user_id_from_request(request)
+        if not user_id:
+            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=user_id)
+        if not user.check_password(password):
+            return Response({'error': 'Invalid password'}, status=status.HTTP_404_NOT_FOUND)
+        
+        user.set_password(new_password)
+        user.save()
+        return Response({"status": "Password changed succesfuly"}, status=status.HTTP_200_OK)
