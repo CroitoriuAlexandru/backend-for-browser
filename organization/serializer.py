@@ -9,6 +9,7 @@ class CompanySerializer(serializers.ModelSerializer):
             'api_record_id',
             'last_querry_date',
             'cui',
+            "nr_employees",
             'denumire',
             'adresa',
             'nrRegCom',
@@ -26,3 +27,9 @@ class CompanySerializer(serializers.ModelSerializer):
             'forma_organizare',
             'forma_juridica'
             )
+        
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['name']
+            

@@ -19,6 +19,7 @@ class Company(models.Model):
     api_record_id = models.CharField(max_length=200, null=True, blank=True)
     last_querry_date = models.CharField(max_length=200, null=True, blank=True)
     cui = models.CharField(max_length=200, null=True, blank=True)
+    nr_employees = models.CharField(max_length=200, null=True, blank=True)
     denumire = models.CharField(max_length=200, null=True, blank=True)
     adresa = models.CharField(max_length=200, null=True, blank=True)
     nrRegCom = models.CharField(max_length=200, null=True, blank=True)

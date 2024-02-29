@@ -1,0 +1,298 @@
+{
+  "_id": "65e05463f08387c91b635dc5",
+  "CUI": 19,
+  "nume_companie": "BUCUR OBOR S.A.",
+  "date_generale": {
+    "cui": 19,
+    "data": "2024-02-16",
+    "denumire": "BUCUR OBOR S.A.",
+    "adresa": "MUNICIPIUL BUCUREŞTI, SECTOR 2, SOS. COLENTINA, NR.2",
+    "nrRegCom": "J40/365/1991",
+    "telefon": "0212525934",
+    "fax": "0212528371",
+    "codPostal": "21172",
+    "act": "",
+    "stare_inregistrare": "INREGISTRAT din data 09.02.1991",
+    "data_inregistrare": "1992-12-10",
+    "cod_CAEN": "4719",
+    "iban": "",
+    "statusRO_e_Factura": true,
+    "organFiscalCompetent": "Administraţia Sector 2 a Finanţelor Publice",
+    "forma_de_proprietate": "PROPR.PRIVATA-CAPITAL PRIVAT AUTOHTON",
+    "forma_organizare": "PERSOANA JURIDICA",
+    "forma_juridica": "SOCIETATE COMERCIALĂ PE ACŢIUNI"
+  },
+  "inregistrare_scop_Tva": {
+    "scpTVA": true,
+    "perioade_TVA": [
+      {
+        "data_inceput_ScpTVA": "1993-07-01",
+        "data_sfarsit_ScpTVA": "",
+        "data_anul_imp_ScpTVA": "",
+        "mesaj_ScpTVA": ""
+      }
+    ]
+  },
+  "inregistrare_RTVAI": {
+    "dataInceputTvaInc": "",
+    "dataSfarsitTvaInc": "",
+    "dataActualizareTvaInc": "",
+    "dataPublicareTvaInc": "",
+    "tipActTvaInc": "",
+    "statusTvaIncasare": false
+  },
+  "stare_inactiv": {
+    "dataInactivare": "",
+    "dataReactivare": "",
+    "dataPublicare": "",
+    "dataRadiere": "",
+    "statusInactivi": false
+  },
+  "inregistrare_SplitTVA": {
+    "dataInceputSplitTVA": "",
+    "dataAnulareSplitTVA": "",
+    "statusSplitTVA": false
+  },
+  "adresa_sediu_social": {
+    "sdenumire_Strada": "Şos. Colentina",
+    "snumar_Strada": "2",
+    "sdenumire_Localitate": "Sector 2 Mun. Bucureşti",
+    "scod_Localitate": "2",
+    "sdenumire_Judet": "MUNICIPIUL BUCUREŞTI",
+    "scod_Judet": "40",
+    "scod_JudetAuto": "B",
+    "stara": "",
+    "sdetalii_Adresa": "",
+    "scod_Postal": "21172"
+  },
+  "adresa_domiciliu_fiscal": {
+    "ddenumire_Strada": "Şos. Colentina",
+    "dnumar_Strada": "2",
+    "ddenumire_Localitate": "Sector 2 Mun. Bucureşti",
+    "dcod_Localitate": "2",
+    "ddenumire_Judet": "MUNICIPIUL BUCUREŞTI",
+    "dcod_Judet": "40",
+    "dcod_JudetAuto": "B",
+    "dtara": "",
+    "ddetalii_Adresa": "",
+    "dcod_Postal": "21172"
+  },
+  "an2022": {
+    "an": 2022,
+    "cui": 19,
+    "deni": "BUCUR OBOR SA",
+    "caen": 4719,
+    "den_caen": "Comert cu amanuntul in magazine nespecializate, cu vanzare predominanta de produse nealimentare",
+    "i": [
+      {
+        "indicator": "I20",
+        "val_indicator": 25,
+        "val_den_indicator": "Numar mediu de salariati"
+      },
+      {
+        "indicator": "I19",
+        "val_indicator": 0,
+        "val_den_indicator": "Pierdere neta"
+      },
+      {
+        "indicator": "I18",
+        "val_indicator": 12218686,
+        "val_den_indicator": "Profit net"
+      },
+      {
+        "indicator": "I17",
+        "val_indicator": 0,
+        "val_den_indicator": "Pierdere bruta"
+      },
+      {
+        "indicator": "I16",
+        "val_indicator": 15813242,
+        "val_den_indicator": "Profit brut"
+      },
+      {
+        "indicator": "I15",
+        "val_indicator": 20442263,
+        "val_den_indicator": "CHELTUIELI TOTALE"
+      },
+      {
+        "indicator": "I14",
+        "val_indicator": 36255505,
+        "val_den_indicator": "VENITURI TOTALE"
+      },
+      {
+        "indicator": "I13",
+        "val_indicator": 34346340,
+        "val_den_indicator": "Cifra de afaceri neta"
+      },
+      {
+        "indicator": "I12",
+        "val_indicator": 0,
+        "val_den_indicator": "Patrimoniul regiei "
+      },
+      {
+        "indicator": "I11",
+        "val_indicator": 1337575,
+        "val_den_indicator": "Capital subscris varsat"
+      },
+      {
+        "indicator": "I10",
+        "val_indicator": 133794315,
+        "val_den_indicator": "CAPITALURI - TOTAL, din care:"
+      },
+      {
+        "indicator": "I9",
+        "val_indicator": 885614,
+        "val_den_indicator": "PROVIZIOANE"
+      },
+      {
+        "indicator": "I8",
+        "val_indicator": 2486200,
+        "val_den_indicator": "VENITURI IN AVANS"
+      },
+      {
+        "indicator": "I7",
+        "val_indicator": 5462257,
+        "val_den_indicator": "DATORII"
+      },
+      {
+        "indicator": "I6",
+        "val_indicator": 31743,
+        "val_den_indicator": "CHELTUIELI IN AVANS"
+      },
+      {
+        "indicator": "I5",
+        "val_indicator": 828110,
+        "val_den_indicator": "Casa şi conturi la bănci"
+      },
+      {
+        "indicator": "I4",
+        "val_indicator": 2506922,
+        "val_den_indicator": "Creante"
+      },
+      {
+        "indicator": "I3",
+        "val_indicator": 92545,
+        "val_den_indicator": "Stocuri"
+      },
+      {
+        "indicator": "I2",
+        "val_indicator": 36427577,
+        "val_den_indicator": "ACTIVE CIRCULANTE - TOTAL, din care:"
+      },
+      {
+        "indicator": "I1",
+        "val_indicator": 106169066,
+        "val_den_indicator": "ACTIVE IMOBILIZATE - TOTAL "
+      }
+    ]
+  },
+  "an2021": {
+    "an": 2021,
+    "cui": 19,
+    "deni": "BUCUR OBOR SA",
+    "caen": 4719,
+    "den_caen": "Comert cu amanuntul in magazine nespecializate, cu vanzare predominanta de produse nealimentare",
+    "i": [
+      {
+        "indicator": "I20",
+        "val_indicator": 36,
+        "val_den_indicator": "Numar mediu de salariati"
+      },
+      {
+        "indicator": "I19",
+        "val_indicator": 0,
+        "val_den_indicator": "Pierdere neta"
+      },
+      {
+        "indicator": "I18",
+        "val_indicator": 9428848,
+        "val_den_indicator": "Profit net"
+      },
+      {
+        "indicator": "I17",
+        "val_indicator": 0,
+        "val_den_indicator": "Pierdere bruta"
+      },
+      {
+        "indicator": "I16",
+        "val_indicator": 12716202,
+        "val_den_indicator": "Profit brut"
+      },
+      {
+        "indicator": "I15",
+        "val_indicator": 21904975,
+        "val_den_indicator": "CHELTUIELI TOTALE"
+      },
+      {
+        "indicator": "I14",
+        "val_indicator": 34621177,
+        "val_den_indicator": "VENITURI TOTALE"
+      },
+      {
+        "indicator": "I13",
+        "val_indicator": 33764601,
+        "val_den_indicator": "Cifra de afaceri neta"
+      },
+      {
+        "indicator": "I12",
+        "val_indicator": 0,
+        "val_den_indicator": "Patrimoniul regiei "
+      },
+      {
+        "indicator": "I11",
+        "val_indicator": 1337575,
+        "val_den_indicator": "Capital subscris varsat"
+      },
+      {
+        "indicator": "I10",
+        "val_indicator": 121575628,
+        "val_den_indicator": "CAPITALURI - TOTAL, din care:"
+      },
+      {
+        "indicator": "I9",
+        "val_indicator": 358334,
+        "val_den_indicator": "PROVIZIOANE"
+      },
+      {
+        "indicator": "I8",
+        "val_indicator": 2517603,
+        "val_den_indicator": "VENITURI IN AVANS"
+      },
+      {
+        "indicator": "I7",
+        "val_indicator": 6924931,
+        "val_den_indicator": "DATORII"
+      },
+      {
+        "indicator": "I6",
+        "val_indicator": 23037,
+        "val_den_indicator": "CHELTUIELI IN AVANS"
+      },
+      {
+        "indicator": "I5",
+        "val_indicator": 368343,
+        "val_den_indicator": "Casa şi conturi la bănci"
+      },
+      {
+        "indicator": "I4",
+        "val_indicator": 7307758,
+        "val_den_indicator": "Creante"
+      },
+      {
+        "indicator": "I3",
+        "val_indicator": 93456,
+        "val_den_indicator": "Stocuri"
+      },
+      {
+        "indicator": "I2",
+        "val_indicator": 16769557,
+        "val_den_indicator": "ACTIVE CIRCULANTE - TOTAL, din care:"
+      },
+      {
+        "indicator": "I1",
+        "val_indicator": 114583902,
+        "val_den_indicator": "ACTIVE IMOBILIZATE - TOTAL "
+      }
+    ]
+  }
+}
