@@ -109,7 +109,6 @@ class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
         users_list = google_get_user_list(admin_id=user.id)
         ic(users_list)
 
-
         for user in users_list:
             employee = Employee(
                 company_id=user_company.first().id,
