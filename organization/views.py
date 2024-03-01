@@ -121,7 +121,7 @@ def set_organization(request):
         )
         employee.save()
 
-    return Response(serializer.data)
+    return Response(serializer.data, status=200)
 
 
 #  company classes
