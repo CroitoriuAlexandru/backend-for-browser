@@ -70,58 +70,60 @@ def get_company_info(user, cui):
 
 # @permission_classes([IsAuthenticated])
 # @permission_classes([IsAuthenticated])
-@api_view(['POST'])
-def set_organization(request):
-    cui = request.data["cui"]
-    # cui must be validated to not be empty and to only contain numbers
-   
-    user = User.objects.get(id=get_user_id_from_request(request))
-    if user.is_anonymous:
-        return Response({"message": "User not found"}, status=200)
+# @api_view(['POST'])
+class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
+    
+    def post(self, request, *args, **kwargs):
+        cui = request.data["cui"]
+        # cui must be validated to not be empty and to only contain numbers
+    
+        user = User.objects.get(id=get_user_id_from_request(request))
+        if user.is_anonymous:
+            return Response({"message": "User not found"}, status=200)
 
-    #  user has a company and it will return it
-    user_company = Company.objects.filter(ceo_id=user.id)
-    if user_company.exists():
-        company = user_company.first()
-        company.delete()
-        organization_data = get_company_info(user, cui)
-        if organization_data.get("message"):
-            return Response(organization_data, status=200)
-        user_company = Company(**organization_data)
-        user_company.save()
-        deparment_unasigned = Department(company=user_company, name="unasigned")
-        deparment_unasigned.save()
-        serializer = CompanySerializer(company, many=False)
-    else:
-        organization_data = get_company_info(user, cui)
-        if organization_data.get("message"):
-            return Response(organization_data, status=200)
-        user_company = Company(**organization_data)
-        user_company.save()
-        deparment_unasigned = Department(company=user_company, name="unasigned")
-        deparment_unasigned.save()
-        serializer = CompanySerializer(company, many=False)
-        
-    user_company = Company.objects.filter(ceo_id=user.id)
+        #  user has a company and it will return it
+        user_company = Company.objects.filter(ceo_id=user.id)
+        if user_company.exists():
+            company = user_company.first()
+            company.delete()
+            organization_data = get_company_info(user, cui)
+            if organization_data.get("message"):
+                return Response(organization_data, status=200)
+            user_company = Company(**organization_data)
+            user_company.save()
+            deparment_unasigned = Department(company=user_company, name="unasigned")
+            deparment_unasigned.save()
+            serializer = CompanySerializer(company, many=False)
+        else:
+            organization_data = get_company_info(user, cui)
+            if organization_data.get("message"):
+                return Response(organization_data, status=200)
+            user_company = Company(**organization_data)
+            user_company.save()
+            deparment_unasigned = Department(company=user_company, name="unasigned")
+            deparment_unasigned.save()
+            serializer = CompanySerializer(company, many=False)
+            
+        user_company = Company.objects.filter(ceo_id=user.id)
 
-    users_list = google_get_user_list(admin_id=user.id)
-    # ic(users_list)
+        users_list = google_get_user_list(admin_id=user.id)
+        ic(users_list)
 
 
-    for user in users_list:
-        employee = Employee(
-            company_id=user_company.first().id,
-            email=user["email"],
-            picture=user["picture"],
-            first_name=user["first_name"],
-            last_name=user["last_name"],
-            phone=user["phone"],
-            department_id=deparment_unasigned.id,
-            emp_from_google=True
-        )
-        employee.save()
+        for user in users_list:
+            employee = Employee(
+                company_id=user_company.first().id,
+                email=user["email"],
+                picture=user["picture"],
+                first_name=user["first_name"],
+                last_name=user["last_name"],
+                phone=user["phone"],
+                department_id=deparment_unasigned.id,
+                emp_from_google=True
+            )
+            employee.save()
 
-    return Response(serializer.data, status=200)
+        return Response(serializer.data, status=200)
 
 
 #  company classes
