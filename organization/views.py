@@ -104,24 +104,24 @@ class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
             deparment_unasigned.save()
             serializer = CompanySerializer(company, many=False)
             
-        user_company = Company.objects.filter(ceo_id=user.id)
+        # user_company = Company.objects.filter(ceo_id=user.id)
 
-        users_list = google_get_user_list(admin_id=user.id)
-        ic(users_list)
+        # users_list = google_get_user_list(admin_id=user.id)
+        # ic(users_list)
 
 
-        for user in users_list:
-            employee = Employee(
-                company_id=user_company.first().id,
-                email=user["email"],
-                picture=user["picture"],
-                first_name=user["first_name"],
-                last_name=user["last_name"],
-                phone=user["phone"],
-                department_id=deparment_unasigned.id,
-                emp_from_google=True
-            )
-            employee.save()
+        # for user in users_list:
+        #     employee = Employee(
+        #         company_id=user_company.first().id,
+        #         email=user["email"],
+        #         picture=user["picture"],
+        #         first_name=user["first_name"],
+        #         last_name=user["last_name"],
+        #         phone=user["phone"],
+        #         department_id=deparment_unasigned.id,
+        #         emp_from_google=True
+        #     )
+        #     employee.save()
 
         return Response(serializer.data, status=200)
 
