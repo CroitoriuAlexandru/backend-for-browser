@@ -19,13 +19,14 @@ from authentication.models import User, GoogleAccessTokens
 from rest_framework import status
 from authentication.serializers import UserSerializer
 from icecream import ic
+from organization.models import Company
 
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):
         code = serializers.CharField(required=False)
         error = serializers.CharField(required=False)
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # ic(request)
         input_serializer = self.InputSerializer(data=request.GET)
         input_serializer.is_valid(raise_exception=True)
@@ -53,7 +54,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         refresh_token = response_info['refresh_token']
     
         user_data = google_get_user_info(access_token=access_token)
-        ic(user_data)
+        # ic(user_data)
 
         try:
             user = User.objects.get(email=user_data['email'])
@@ -97,31 +98,6 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
                 'refresh': str(refresh_token)
             }
             return Response(response_data, status=status.HTTP_200_OK)
-
-class GoogleUserListApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    
-    def get(self, request, *args, **kwargs):
-        user_id = get_user_id_from_request(request)
-        if not user_id:
-            return Response({'error': 'user could not be identified by the token'}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = User.objects.get(id=user_id)
-        
-        googleAccessTokens = GoogleAccessTokens.objects.get(user=user)
-        refresh_token = googleAccessTokens.refresh_token
-        google_access_response = google_refresh_access_token(refresh_token=refresh_token)
-        access_token = google_access_response['access_token']
-        
-        if google_validate_admin(access_token=access_token, user_email=user.email):
-            user_list = google_get_user_list(access_token=access_token)
-            ic(user_list)
-            return Response(user_list, status=status.HTTP_200_OK)
-        
-        context = {
-            "message": "User is not admin!"
-        }
-    
-        return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):

@@ -12,10 +12,12 @@ from rest_framework.views import APIView
 # from rest_framework_simplejwt.views import TokenObtainPairView
 import json
 
-from organization.models import Company, Department
-from organization.serializer import CompanySerializer, DepartmentSerializer
+from organization.models import Company, Department, Employee
+from organization.serializers import CompanySerializer, DepartmentSerializer, EmployeeSerializer
 from organization.ai.gptdepartamente import generate_departments
-
+from authentication.serializers import UserSerializer
+from authentication.utils import google_get_user_list
+from organization.utils import organigram_info
 def validateCui(cui):
     # Check if cui is None or empty
     if cui is None or cui == '':
@@ -40,7 +42,7 @@ def get_company_info(user, cui):
         return {"message": 'Company with cui {cui} not found'}
 
     organization_data = {
-            "user_id": user.id,
+            "ceo_id": user.id,
             "api_record_id": response.json().get("_id"),
             "last_querry_date": response.json().get("date_generale").get("data"),
             "cui": response.json().get("CUI"),
@@ -78,58 +80,84 @@ def set_organization(request):
         return Response({"message": "User not found"}, status=200)
 
     #  user has a company and it will return it
-    user_company = Company.objects.filter(user_id=user.id)
+    user_company = Company.objects.filter(ceo_id=user.id)
     if user_company.exists():
         company = user_company.first()
         company.delete()
         organization_data = get_company_info(user, cui)
         if organization_data.get("message"):
             return Response(organization_data, status=200)
-        company = Company(**organization_data)
-        company.save()
+        user_company = Company(**organization_data)
+        user_company.save()
+        deparment_unasigned = Department(company=user_company, name="unasigned")
+        deparment_unasigned.save()
         serializer = CompanySerializer(company, many=False)
-        return Response(serializer.data)
     else:
         organization_data = get_company_info(user, cui)
         if organization_data.get("message"):
             return Response(organization_data, status=200)
-        company = Company(**organization_data)
-        company.save()
+        user_company = Company(**organization_data)
+        user_company.save()
+        deparment_unasigned = Department(company=user_company, name="unasigned")
+        deparment_unasigned.save()
         serializer = CompanySerializer(company, many=False)
-        return Response(serializer.data)
+        
+    user_company = Company.objects.filter(ceo_id=user.id)
+
+    users_list = google_get_user_list(admin_id=user.id)
+    # ic(users_list)
 
 
-# @api_view(['GET'])
-# def generate_company_departments(request):
-#     print("test")
+    for user in users_list:
+        employee = Employee(
+            company_id=user_company.first().id,
+            email=user["email"],
+            picture=user["picture"],
+            first_name=user["first_name"],
+            last_name=user["last_name"],
+            phone=user["phone"],
+            department_id=deparment_unasigned.id,
+            emp_from_google=True
+        )
+        employee.save()
 
-#     data = generate_departments("19", "5")
-
-#     # user = request.user
-#     # print(user)
-#     # if user.is_anonymous:
-#     #     return Response({"message": "User not found"}, status=200)
+    return Response(serializer.data)
 
 
-#     # data = {
-#     #     'departments': [
-#     #         'sales',
-#     #         'marketing',
-#     #         'finance',
-#     #         'hr',
-#     #         'it',
-#     #     ]
-#     # }
-    
-#     # fetch_company_info()
-#     ic(data)
-#     return Response(data)
+#  company classes
+class get_organigram_info(PublicApiMixin, ApiErrorsMixin, APIView):
+    userSerializer = UserSerializer
+
+    def get(self, request, *args, **kwargs):
+        data = organigram_info(request)
+        return Response(data, status=200)
+
+class set_employee_department(PublicApiMixin, ApiErrorsMixin, APIView):
+        
+        def post(self, request, *args, **kwargs):
+            user = get_user_id_from_request(request)
+            company = Company.objects.filter(ceo_id=user)
+            if not company.exists():
+                return Response({"message": "Company not found for this user"}, status=200)
+            
+            employee = Employee.objects.filter(id=request.data.get("employee_id"))
+            if not employee.exists():
+                return Response({"message": "Employee not found"}, status=200)
+            
+            department = Department.objects.filter(id=request.data.get("department_id"))
+            if not department.exists():
+                return Response({"message": "Department not found"}, status=200)
+            
+            employee.update(department=department.first())
+
+            data = organigram_info(request)
+            return Response(data, status=200)
 
 class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
         user = get_user_id_from_request(request)
-        company = Company.objects.filter(user_id=user)
+        company = Company.objects.filter(ceo_id=user)
         if not company.exists():
             return Response([{"message": "Company not found for this user"}], status=200)
         
@@ -148,7 +176,7 @@ class set_caen_code(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def post(self, request, *args, **kwargs):
         user = get_user_id_from_request(request)
-        company = Company.objects.filter(user_id=user)
+        company = Company.objects.filter(ceo_id=user)
         if not company.exists():
             return Response({"message": "Company not found for this user"}, status=200)
         
@@ -162,7 +190,7 @@ class set_nr_employees(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def post(self, request, *args, **kwargs):
         user = get_user_id_from_request(request)
-        company = Company.objects.filter(user_id=user)
+        company = Company.objects.filter(ceo_id=user)
         if not company.exists():
             return Response({"message": "Company not found for this user"}, status=200)
         
@@ -177,12 +205,15 @@ class set_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def post(self, request, *args, **kwargs):
         user = get_user_id_from_request(request)
-        company = Company.objects.filter(user_id=user)
+        company = Company.objects.filter(ceo_id=user)
         if not company.exists():
             return Response({"message": "Company not found for this user"}, status=200)
         
         dbo_departments = Department.objects.filter(company=company.first())
-        dbo_departments.delete()
+
+        for department in dbo_departments:
+            if department.name != "unasigned":
+                department.delete()
         
         r_departments = request.data.get("departments")
         

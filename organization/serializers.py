@@ -5,7 +5,7 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = (
-            'user',
+            'ceo',
             'api_record_id',
             'last_querry_date',
             'cui',
@@ -32,4 +32,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = ['name']
+        
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['user_id', 'company_id', 'department_id', "department_name", 'emp_from_google', 'picture', 'first_name', 'last_name', 'phone', 'email']
             
