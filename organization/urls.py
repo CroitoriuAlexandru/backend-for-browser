@@ -11,5 +11,5 @@ urlpatterns = [
 
     
     path('get_organigram_info/', views.get_organigram_info.as_view()),
-    path('set_employee_department/', views.set_employee_department.as_view()),
+    path('set_employee_department_and_supervizer/', views.set_employee_department_and_supervizer.as_view()),
 ]

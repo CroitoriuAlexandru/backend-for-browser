@@ -8,16 +8,16 @@ class User(AbstractUser):
     email = models.CharField(max_length=250, unique=True, null=False, blank=False)
     phone = models.CharField(max_length=250, null=True, blank=True)
     
-    REGISTRATION_CHOICES = [
-        ('email', 'Email'),
-        ('google', 'Google'),
-    ]
+    # REGISTRATION_CHOICES = [
+    #     ('email', 'Email'),
+    #     ('google', 'Google'),
+    # ]
     
-    registration_method = models.CharField(
-        max_length=10,
-        choices=REGISTRATION_CHOICES,
-        default='email'
-    )
+    # registration_method = models.CharField(
+    #     max_length=10,
+    #     choices=REGISTRATION_CHOICES,
+    #     default='email'
+    # )
 
     def __str__(self):
        return self.email
@@ -25,7 +25,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
     
-
+    
 class GoogleAccessTokens(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     refresh_token = models.CharField(max_length=250, null=False, blank=False)

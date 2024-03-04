@@ -133,27 +133,40 @@ class get_organigram_info(PublicApiMixin, ApiErrorsMixin, APIView):
         data = organigram_info(request)
         return Response(data, status=200)
 
-class set_employee_department(PublicApiMixin, ApiErrorsMixin, APIView):
+
+
+class set_employee_department_and_supervizer(PublicApiMixin, ApiErrorsMixin, APIView):
+    
+    def post(self, request, *args, **kwargs):
+        user = get_user_id_from_request(request)
+        company = Company.objects.filter(ceo_id=user)
+
+        employee_id = request.data.get("employee_id")        
+        new_department_id = request.data.get("department_id")
+        new_supervizer_id = request.data.get("supervizer_id")
         
-        def post(self, request, *args, **kwargs):
-            user = get_user_id_from_request(request)
-            company = Company.objects.filter(ceo_id=user)
-            if not company.exists():
-                return Response({"message": "Company not found for this user"}, status=200)
-            
-            employee = Employee.objects.filter(id=request.data.get("employee_id"))
-            if not employee.exists():
-                return Response({"message": "Employee not found"}, status=200)
-            
-            department = Department.objects.filter(id=request.data.get("department_id"))
-            if not department.exists():
-                return Response({"message": "Department not found"}, status=200)
-            
-            employee.update(department=department.first())
+        if not company.exists():
+            return Response({"message": "Company not found for this user"}, status=200)
+        
+        employee = Employee.objects.filter(id=employee_id)
+        if not employee.exists():
+            return Response({"message": "Employee not found"}, status=200)
+        
+        department = Department.objects.filter(id=new_department_id)
+        if not department.exists():
+            return Response({"message": "Department not found"}, status=200)
+        
+        supervizer = Employee.objects.filter(id=new_supervizer_id)
 
-            data = organigram_info(request)
-            return Response(data, status=200)
+        
+        ic(employee_id)
+        ic(new_department_id)
+        ic(new_supervizer_id)
+        
+        employee.update(department=department.first(), supervizer_id=new_supervizer_id)
 
+        data = organigram_info(request)
+        return Response(data, status=200)
 
 class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
@@ -166,12 +179,12 @@ class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
         cod_caen = company.first().cod_CAEN
         nr_employees = company.first().nr_employees
         
-        
         ic(type(cod_caen))
         ic(type(nr_employees))
         data = generate_departments(cod_caen, nr_employees)
         ic(data)
         return Response(json.loads(data))
+        # return Response(data)
 
 
 class set_caen_code(PublicApiMixin, ApiErrorsMixin, APIView):
@@ -226,3 +239,5 @@ class set_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
         deparmentsSerilizer = DepartmentSerializer(Department.objects.filter(company=company.first()), many=True)
         
         return Response(deparmentsSerilizer.data, status=200)
+    
+   

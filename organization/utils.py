@@ -21,6 +21,7 @@ def organigram_info(request):
             "company_id": employee.company_id,
             "department_id": employee.department_id,
             "department_name": employee.department_name,
+            "supervizer_id": employee.supervizer_id,
             "emp_from_google": employee.emp_from_google,
             "picture": employee.picture,
             "first_name": employee.first_name,
