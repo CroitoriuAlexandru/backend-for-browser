@@ -107,7 +107,7 @@ class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
             user_company.save()
             deparment_unasigned = Department(company=user_company, name="unasigned")
             deparment_unasigned.save()
-            serializer = CompanySerializer(company, many=False)
+            serializer = CompanySerializer(user_company, many=False)
             
         user_company = Company.objects.filter(ceo_id=user.id)
 
@@ -160,9 +160,6 @@ class set_employee_department_and_supervizer(PublicApiMixin, ApiErrorsMixin, API
         department = Department.objects.filter(id=new_department_id)
         if not department.exists():
             return Response({"message": "Department not found"}, status=200)
-        
-        supervizer = Employee.objects.filter(id=new_supervizer_id)
-
         
         ic(employee_id)
         ic(new_department_id)
@@ -230,16 +227,19 @@ class set_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
             return Response({"message": "Company not found for this user"}, status=200)
         
         dbo_departments = Department.objects.filter(company=company.first())
-
+        
         for department in dbo_departments:
             if department.name != "unasigned":
                 department.delete()
         
-        r_departments = request.data.get("departments")
+       
         
+        r_departments = request.data.get("departments")
         for department in r_departments:
             new_department = Department(company=company.first(), name=department)
             new_department.save()
+
+        
 
         deparmentsSerilizer = DepartmentSerializer(Department.objects.filter(company=company.first()), many=True)
         
