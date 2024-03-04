@@ -18,6 +18,7 @@ from organization.ai.gptdepartamente import generate_departments
 from authentication.serializers import UserSerializer
 from authentication.utils import google_get_user_list
 from organization.utils import organigram_info
+
 def validateCui(cui):
     # Check if cui is None or empty
     if cui is None or cui == '':
@@ -68,9 +69,13 @@ def get_company_info(user, cui):
 
     return organization_data
 
+@api_view(['GET'])
+def test_stuff(request):
+    return Response({"message": "test stuff"})
+
+
 # @permission_classes([IsAuthenticated])
 # @permission_classes([IsAuthenticated])
-# @api_view(['POST'])
 class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def post(self, request, *args, **kwargs):
