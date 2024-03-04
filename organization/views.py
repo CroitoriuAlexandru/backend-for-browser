@@ -154,6 +154,7 @@ class set_employee_department(PublicApiMixin, ApiErrorsMixin, APIView):
             data = organigram_info(request)
             return Response(data, status=200)
 
+
 class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
