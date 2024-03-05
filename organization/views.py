@@ -90,12 +90,19 @@ class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
         user_company = Company.objects.filter(ceo_id=user.id)
         if user_company.exists():
             company = user_company.first()
+            departments = company.get_departments
             company.delete()
             organization_data = get_company_info(user, cui)
             if organization_data.get("message"):
                 return Response(organization_data, status=200)
             user_company = Company(**organization_data)
             user_company.save()
+            for department in departments:
+                # department.company = user_company
+                new_department = Department(company=user_company, name=department.name)
+                new_department.save()
+                ic(new_department)
+                # department.save()
             deparment_unasigned = Department(company=user_company, name="unasigned")
             deparment_unasigned.save()
             serializer = CompanySerializer(company, many=False)
@@ -111,24 +118,56 @@ class set_organization(PublicApiMixin, ApiErrorsMixin, APIView):
             
         user_company = Company.objects.filter(ceo_id=user.id)
 
-        users_list = google_get_user_list(admin_id=user.id)
-        ic(users_list)
+        # users_list = google_get_user_list(admin_id=user.id)
+        # ic(users_list)
+
+        # for user in users_list:
+        #     employee = Employee(
+        #         company_id=user_company.first().id,
+        #         email=user["email"],
+        #         picture=user["picture"],
+        #         first_name=user["first_name"],
+        #         last_name=user["last_name"],
+        #         phone=user["phone"],
+        #         department_id=deparment_unasigned.id,
+        #         emp_from_google=True
+        #     )
+        #     employee.save()
+
+        return Response(serializer.data, status=200)
+
+
+class get_user_employees_from_google(PublicApiMixin, ApiErrorsMixin, APIView):
+    
+    def get(self, request, *args, **kwargs):
+        user_id = get_user_id_from_request(request)
+        company = Company.objects.filter(ceo_id=user_id)
+        if not company.exists():
+            return Response([{"message": "Company not found for this user"}], status=200)
+        
+        # get unasigned department of company
+        deparment_unasigned = Department.objects.filter(company=company.first(), name="unasigned")
+        
+        prev_google_employees = Employee.objects.filter(company=company.first(), emp_from_google=True)
+        prev_google_employees.delete()
+        
+        
+        users_list = google_get_user_list(admin_id=user_id)
 
         for user in users_list:
             employee = Employee(
-                company_id=user_company.first().id,
+                company_id=company.first().id,
                 email=user["email"],
                 picture=user["picture"],
                 first_name=user["first_name"],
                 last_name=user["last_name"],
                 phone=user["phone"],
-                department_id=deparment_unasigned.id,
+                department_id=deparment_unasigned.first().id,
                 emp_from_google=True
             )
             employee.save()
-
-        return Response(serializer.data, status=200)
-
+    
+        return Response(organigram_info(request), status=200)
 
 #  company classes
 class get_organigram_info(PublicApiMixin, ApiErrorsMixin, APIView):
@@ -230,6 +269,11 @@ class set_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
         
         for department in dbo_departments:
             if department.name != "unasigned":
+                employees = department.get_employees()
+                for employee in employees:
+                    employee.department = dbo_departments.get(name="unasigned")
+                    employee.supervizer_id = None
+                    employee.save()
                 department.delete()
         
        

@@ -61,13 +61,22 @@ class Company(models.Model):
     forma_organizare = models.CharField(max_length=200, null=True, blank=True)
     forma_juridica = models.CharField(max_length=200, null=True, blank=True)
     
+    
+    @property
+    def get_departments(self):
+        return Department.objects.filter(company=self)
+    
+    @property
+    def get_employees(self):
+        return Employee.objects.filter(company=self)
+    
     def __str__(self):
         return f'{self.denumire}'
 
 
 # departments table
 class Department(models.Model):
-    company = models.ForeignKey('Company', on_delete=models.CASCADE, null=True, blank=True)
+    company = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
