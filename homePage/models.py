@@ -18,3 +18,10 @@ class HomeLayout(models.Model):
     
     def __str__(self):
         return self.url
+
+class MostUsedSites(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    url = models.URLField(null=False, blank=False)
+    
+    def __str__(self):
+        return self.url
