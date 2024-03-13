@@ -21,6 +21,9 @@ from authentication.serializers import UserSerializer
 from icecream import ic
 from organization.models import Company
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):
         code = serializers.CharField(required=False)
@@ -100,13 +103,18 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             return Response(response_data, status=status.HTTP_200_OK)
 
 class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
+    class regular_login_serializer(serializers.Serializer):
         email = serializers.EmailField()
         password = serializers.CharField()
 
+    @swagger_auto_schema(
+        request_body=regular_login_serializer,
+        # responses={200: openapi.Response('Response description', regular_login_serializer)}
+    )
+
     def post(self, request, *args, **kwargs):
         print("post request for login")
-        input_serializer = self.InputSerializer(data=request.data)
+        input_serializer = self.regular_login_serializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         validated_data = input_serializer.validated_data
         email = validated_data.get('email')
