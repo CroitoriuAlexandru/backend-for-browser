@@ -10,7 +10,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path("auth/regular-login/", views.RegularLoginApi.as_view(), name="regular-login"),
 
-    path("uesr/profile/", views.UserProfileApi.as_view(), name="user-profile"),
+    path("user/profile/", views.UserProfileApi.as_view(), name="user-profile"),
     path("user/setfirstname/", views.SetFirstNameApi.as_view(), name="set-first-name"),
     path("user/setlastname/", views.SetLastNameApi.as_view(), name="set-last-name"),
     path("user/setusername/", views.SetUsernameApi.as_view(), name="set-username"),

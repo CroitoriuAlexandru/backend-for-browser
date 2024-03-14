@@ -8,3 +8,5 @@ class HomeBackgroundSerializer(serializers.ModelSerializer):
     class Meta:
         model = HomeBackground
         fields = '__all__'
+    
+    read_only_fields = ['user']

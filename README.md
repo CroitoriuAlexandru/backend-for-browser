@@ -6,7 +6,7 @@ pipenv install djangorestframework
 pipenv install djangorestframework-simplejwt
 pipenv install django-cors-headers
 
-
+fetch-swagger-schema http://127.0.0.1:8000/api/api-docs testttt.json
 
 home page should have all of the moust used apps from history
 take history see what are the most used urls

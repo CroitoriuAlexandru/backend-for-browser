@@ -15,3 +15,12 @@ class UserSerializer(serializers.ModelSerializer):
             'email'
             ]
 
+class InputSerializer(serializers.Serializer):
+    char_input = serializers.CharField()
+
+
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(min_length=7, max_length=100)
+    new_password = serializers.CharField(min_length=7, max_length=100)
+
+

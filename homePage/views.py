@@ -9,10 +9,20 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from authentication.utils import get_user_id_from_request
 from authentication.models import User
 import icecream as ic  # Import the icecream module for logging
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework import permissions
+from rest_framework import serializers
+from rest_framework import status
 
 # Create your views here.
 class add_background_image(PublicApiMixin, ApiErrorsMixin, APIView):
-    parser_classes = (MultiPartParser, FormParser)    
+    parser_classes = (MultiPartParser, FormParser)
+
+    @swagger_auto_schema(
+        request_body=HomeBackgroundSerializer,
+        responses={200: HomeBackgroundSerializer}
+    )
     
     def post(self, request):
         user_id = get_user_id_from_request(request)

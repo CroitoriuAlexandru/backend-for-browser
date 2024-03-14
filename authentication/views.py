@@ -17,7 +17,7 @@ from authentication.utils import (
     )
 from authentication.models import User, GoogleAccessTokens
 from rest_framework import status
-from authentication.serializers import UserSerializer
+from authentication.serializers import UserSerializer, InputSerializer, PasswordSerializer
 from icecream import ic
 from organization.models import Company
 
@@ -104,19 +104,24 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
 class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class regular_login_serializer(serializers.Serializer):
-        email = serializers.EmailField()
-        password = serializers.CharField()
+        email = serializers.EmailField(min_length=5, max_length=100)
+        password = serializers.CharField(min_length=3, max_length=100)
+
+    class tokensSerializer(serializers.Serializer):
+        access = serializers.CharField()
+        refresh = serializers.CharField()
 
     @swagger_auto_schema(
         request_body=regular_login_serializer,
+        responses={200: tokensSerializer}
         # responses={200: openapi.Response('Response description', regular_login_serializer)}
     )
 
     def post(self, request, *args, **kwargs):
         print("post request for login")
-        input_serializer = self.regular_login_serializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-        validated_data = input_serializer.validated_data
+        regular_login_serializer = self.regular_login_serializer(data=request.data)
+        regular_login_serializer.is_valid(raise_exception=True)
+        validated_data = regular_login_serializer.validated_data
         email = validated_data.get('email')
         password = validated_data.get('password')
 
@@ -130,7 +135,6 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
         access_token, refresh_token = generate_tokens_for_user(user)
         response_data = {
-            # 'user': UserSerializer(user).data,
             'access': str(access_token),
             'refresh': str(refresh_token)
         }
@@ -138,6 +142,13 @@ class RegularLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         return Response(response_data, status=status.HTTP_200_OK)
     
 class UserProfileApi(PublicApiMixin, ApiErrorsMixin, APIView):
+
+    @swagger_auto_schema(
+        responses={200: UserSerializer}
+    )
+    
+    
+    
     def get(self, request, *args, **kwargs):
         user_id = get_user_id_from_request(request)
         if not user_id:
@@ -149,8 +160,12 @@ class UserProfileApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
 # ! apis for updating first name, last name, username, picture, password
 class SetFirstNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        first_name = serializers.CharField()
+
+    @swagger_auto_schema(
+        request_body=InputSerializer,
+        responses={200: UserSerializer}
+    )
+    
 
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
@@ -168,8 +183,11 @@ class SetFirstNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 class SetLastNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        last_name = serializers.CharField()
+
+    @swagger_auto_schema(
+        request_body=InputSerializer,
+        responses={200: UserSerializer}
+    )
 
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
@@ -187,8 +205,11 @@ class SetLastNameApi(PublicApiMixin, ApiErrorsMixin, APIView):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 class SetUsernameApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        username = serializers.CharField()
+
+    @swagger_auto_schema(
+        request_body=InputSerializer,
+        responses={200: UserSerializer}
+    )
 
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
@@ -206,10 +227,13 @@ class SetUsernameApi(PublicApiMixin, ApiErrorsMixin, APIView):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 class SetUserPhotoApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        picture = serializers.CharField()
 
-        
+    @swagger_auto_schema(
+        request_body=InputSerializer,
+        responses={200: UserSerializer}
+    )
+
+
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -224,13 +248,17 @@ class SetUserPhotoApi(PublicApiMixin, ApiErrorsMixin, APIView):
         user.picture = picture
         user.save()
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-    
+
     
 class SetUserPhoneApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        phone = serializers.CharField()
 
-        
+    
+    @swagger_auto_schema(
+        request_body=InputSerializer,
+        responses={200: UserSerializer}
+    )
+
+    
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -247,11 +275,14 @@ class SetUserPhoneApi(PublicApiMixin, ApiErrorsMixin, APIView):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 class setUserPasswordApi(PublicApiMixin, ApiErrorsMixin, APIView):
-    class InputSerializer(serializers.Serializer):
-        password = serializers.CharField()
-        new_password = serializers.CharField()
 
-        
+    
+    @swagger_auto_schema(
+        request_body=PasswordSerializer,
+        responses={200: UserSerializer}
+    )
+
+    
     def post(self, request, *args, **kwargs):
         input_serializer = self.InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
