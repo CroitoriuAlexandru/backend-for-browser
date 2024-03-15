@@ -212,20 +212,33 @@ class set_employee_department_and_supervizer(PublicApiMixin, ApiErrorsMixin, API
 class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
     def get(self, request, *args, **kwargs):
-        user = get_user_id_from_request(request)
-        company = Company.objects.filter(ceo_id=user)
-        if not company.exists():
-            return Response([{"message": "Company not found for this user"}], status=200)
+        # user = get_user_id_from_request(request)
+        # company = Company.objects.filter(ceo_id=user)
+        # if not company.exists():
+        #     return Response([{"message": "Company not found for this user"}], status=200)
         
-        cod_caen = company.first().cod_CAEN
-        nr_employees = company.first().nr_employees
         
-        ic(type(cod_caen))
-        ic(type(nr_employees))
+        
+        # cod_caen = company.first().cod_CAEN
+        # nr_employees = company.first().nr_employees
+            # "api_record_id": response.json().get("_id"),
+        
+        cod_caen = request.data.get("cod_caen")
+        nr_employees = request.data.get("nr_employees")
+        
         data = generate_departments(cod_caen, nr_employees)
         ic(data)
-        return Response(json.loads(data))
+        return Response(json.loads(data), status=200)
         # return Response(data)
+
+def generate_company_departments_v2(request):
+    
+    # cod_caen = request.body.get("cod_caen")
+    # nr_employees = request.body.get("nr_employees")
+        
+    # data = generate_departments(cod_caen, nr_employees)
+    
+    return Response(json.loads("[]"), status=200)
 
 
 class set_caen_code(PublicApiMixin, ApiErrorsMixin, APIView):
@@ -289,4 +302,4 @@ class set_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
         
         return Response(deparmentsSerilizer.data, status=200)
     
-   
+

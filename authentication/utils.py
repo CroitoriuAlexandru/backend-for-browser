@@ -91,20 +91,12 @@ def google_get_user_list(admin_id: str) -> [dict]:
 
     user_list = response_users.json()
     ic(user_list)
+    
     users_list = []
     for user in user_list["users"]:
         # ic(user)
         if user["primaryEmail"] == admin_user.email:
             continue
-        # user_record = EmployeeSerializer(data={
-        #     # "company_id": company.id,
-        #     "email": user["primaryEmail"],
-        #     "picture": user["thumbnailPhotoUrl"] if "thumbnailPhotoUrl" in user.keys() else "",
-        #     "first_name": user["name"]["givenName"],
-        #     "last_name": user["name"]["familyName"],
-        #     "phone": user["phones"][0]["value"] if "phones" in user.keys() else "",
-        #     "emp_from_google": True,
-        # })
         user_record = {
             "email": user["primaryEmail"],
             "picture": user["thumbnailPhotoUrl"] if "thumbnailPhotoUrl" in user.keys() else "",

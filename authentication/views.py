@@ -30,6 +30,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         error = serializers.CharField(required=False)
 
     def post(self, request, *args, **kwargs):
+        ic(request)
         # ic(request)
         input_serializer = self.InputSerializer(data=request.GET)
         input_serializer.is_valid(raise_exception=True)
@@ -47,7 +48,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         # ic(code)
         response_info = google_get_access_token(code=code, 
                                                redirect_uri=redirect_uri)
-
+        ic(response_info)
                                                
         # check if access_token exists
         if not response_info.get('access_token'):
