@@ -211,7 +211,7 @@ class set_employee_department_and_supervizer(PublicApiMixin, ApiErrorsMixin, API
 
 class generate_company_departments(PublicApiMixin, ApiErrorsMixin, APIView):
     
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # user = get_user_id_from_request(request)
         # company = Company.objects.filter(ceo_id=user)
         # if not company.exists():
